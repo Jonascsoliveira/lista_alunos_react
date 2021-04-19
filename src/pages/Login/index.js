@@ -1,19 +1,19 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { isEmail } from 'validator';
 import { get } from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Container } from '../../styles/GlobalStyles';
 import { Form } from './styled';
 import * as actions from '../../store/modules/auth/actions';
-import axios from '../../services/axios';
-import history from '../../services/history';
+
+import Loading from '../../components/Loading';
 
 export default function Login(props) {
   const dispatch = useDispatch();
   const prevPath = get(props, 'location.state.prevPath', '/');
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,20 +35,11 @@ export default function Login(props) {
     if (formErrors) return;
 
     dispatch(actions.loginRequest({ email, password, prevPath }));
-    /*
-    try {
-      const res = await axios.post('/tokens', { password, email });
-      toast.success(`Bem vindo ${res.data.user.nome}!`);
-      history.push('/');
-    } catch (err) {
-      const errors = get(err, 'response.data.errors', []);
-      errors.map((error) => toast.error(error));
-    }
-*/
   }
 
   return (
     <Container>
+      <Loading isLoading={isLoading} />
       <h1>Login</h1>
 
       <Form onSubmit={handleSubmit}>
